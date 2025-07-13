@@ -149,7 +149,7 @@ body {
 }
 
 .card-back {
-    background-color: #ff0000;
+    background-color: #ee1515;
     transform: rotateY(0deg);
 }
 
@@ -252,45 +252,6 @@ body {
 
 .pokedex-btn i {
     margin-right: 8px;
-}
-
-/* Modal Styles */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 800px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: relative;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-}
-
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 24px;
-    cursor: pointer;
-    color: #777;
-}
-
-.close-btn:hover {
-    color: #333;
 }
 
 /* Pokédex Content Styles */

@@ -1,300 +1,319 @@
-// ===== OPTIMIZED CONSTANTS AND DATA =====
-const POKEMON_COUNT = 151;
-const API_BASE_URL = 'https://pokeapi.co/api/v2';
-const CRY_BASE_URL = 'https://play.pokemonshowdown.com/audio/cries';
-const SPRITE_BASE_URL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork';
+// Pokémon data with extended information
+const pokemonData = Array.from({ length: 151 }, (_, i) => {
+    const id = i + 1;
+    const name = getPokemonName(id);
+    return {
+        id,
+        name,
+        imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+        soundUrl: `https://play.pokemonshowdown.com/audio/cries/${name.toLowerCase()}.mp3`,
+        ...getPokemonDetails(id, name)
+    };
+});
 
-// DOM Elements
-const elements = {
-  // (Keep your existing element references)
+// Type colors mapping
+const typeColors = {
+    bug: '#A8B820',
+    dragon: '#7038F8',
+    electric: '#F8D030',
+    fighting: '#C03028',
+    fire: '#F08030',
+    flying: '#A890F0',
+    ghost: '#705898',
+    grass: '#78C850',
+    ground: '#E0C068',
+    ice: '#98D8D8',
+    normal: '#A8A878',
+    poison: '#A040A0',
+    psychic: '#F85888',
+    rock: '#B8A038',
+    water: '#6890F0'
 };
 
-// Audio Elements
-const audio = {
-  // (Keep your existing audio references)
-};
+// Extended Pokémon details
+function getPokemonDetails(id, name) {
+    // This is a simplified version - in a real app you'd fetch from PokeAPI
+    const details = {
+        height: (Math.floor(Math.random() * 20) + 1) / 10, // 0.1 to 2.0 meters
+        weight: Math.floor(Math.random() * 1000) + 1, // 1 to 1000 kg
+        habitat: ['Forest', 'Cave', 'Mountain', 'Urban', 'Water', 'Grassland', 'Rare'][Math.floor(Math.random() * 7)],
+        generation: 1,
+        category: getCategory(name),
+        abilities: ['Overgrow', 'Chlorophyll', 'Blaze', 'Torrent', 'Static'][Math.floor(Math.random() * 5)],
+        stats: {
+            hp: Math.floor(Math.random() * 100) + 50,
+            attack: Math.floor(Math.random() * 100) + 30,
+            defense: Math.floor(Math.random() * 100) + 30,
+            'special-attack': Math.floor(Math.random() * 100) + 30,
+            'special-defense': Math.floor(Math.random() * 100) + 30,
+            speed: Math.floor(Math.random() * 100) + 30
+        },
+        description: getDescription(name),
+        types: getTypes(id),
+        evolution: getEvolution(id)
+    };
 
-// App State
-const state = {
-  currentPokemon: null,
-  isRevealed: false,
-  isMusicOn: true,
-  isSoundOn: true,
-  pokemonData: [],
-  loadedPokemonCount: 0,
-  currentPage: 1,
-  itemsPerPage: 20,
-  allTypes: [],
-  cache: new Map(),
-  isFirstLoad: true
-};
+    return details;
+}
 
-// ===== OPTIMIZED INITIALIZATION =====
-async function init() {
-  try {
-    // Phase 1: Load critical assets first
-    updateLoadingProgress(10, 'Loading essential assets...');
-    await preloadCriticalAssets();
+function getCategory(name) {
+    if (name === 'Charizard') return 'Flame Pokémon';
+    if (name === 'Blastoise') return 'Shellfish Pokémon';
+    if (name === 'Venusaur') return 'Seed Pokémon';
+    if (name === 'Pikachu') return 'Mouse Pokémon';
+    if (name === 'Gyarados') return 'Atrocious Pokémon';
+    if (name === 'Snorlax') return 'Sleeping Pokémon';
+    if (name === 'Dragonite') return 'Dragon Pokémon';
+    if (name === 'Mewtwo') return 'Genetic Pokémon';
+    if (name === 'Mew') return 'New Species Pokémon';
+    return 'Pokémon';
+}
 
-    // Phase 2: Load initial Pokémon data
-    updateLoadingProgress(30, 'Loading Pokémon data...');
-    await loadInitialPokemonData();
+function getDescription(name) {
+    const descriptions = [
+        `${name} is a fascinating creature with unique abilities.`,
+        `The ${name} is known for its distinctive characteristics in the Pokémon world.`,
+        `${name} has been the subject of many Pokémon research studies.`,
+        `Trainers value ${name} for its special capabilities.`,
+        `In the wild, ${name} exhibits interesting behavioral patterns.`,
+        `${name} is one of the most recognizable Pokémon species.`,
+        `Legends tell stories about the power of ${name}.`,
+        `${name} has evolved unique adaptations to survive in its habitat.`
+    ];
+    return descriptions[Math.floor(Math.random() * descriptions.length)];
+}
 
-    // Phase 3: Load remaining assets in background
-    updateLoadingProgress(70, 'Preparing your Pokédex...');
-    loadRemainingAssets();
+function getTypes(id) {
+    // Simplified type assignments - in a real app you'd get accurate types
+    const typePairs = [
+        ['grass', 'poison'], ['fire'], ['water'], ['bug'], ['flying', 'normal'],
+        ['poison'], ['electric'], ['ground'], ['fairy'], ['psychic'],
+        ['fighting'], ['ghost'], ['dragon'], ['ice'], ['rock']
+    ];
 
-    // Set up event listeners early
-    setupEventListeners();
+    const type1 = typePairs[id % typePairs.length][0];
+    const type2 = typePairs[id % typePairs.length][1];
 
-    // Get initial random Pokémon from preloaded data
+    return type2 ? [type1, type2] : [type1];
+}
+
+function getEvolution(id) {
+    // Simplified evolution chains - in a real app you'd get accurate evolutions
+    if (id === 1) return [1, 2, 3];
+    if (id === 4) return [4, 5, 6];
+    if (id === 7) return [7, 8, 9];
+    if (id === 10) return [10, 11, 12];
+    if (id === 13) return [13, 14, 15];
+    if (id === 16) return [16, 17, 18];
+    if (id === 25) return [172, 25, 26];
+    if (id === 133) return [133, 134, 135, 136];
+    return [id];
+}
+
+function getPokemonName(id) {
+    const names = [
+        'Bulbasaur', 'Ivysaur', 'Venusaur', 'Charmander', 'Charmeleon', 'Charizard',
+        'Squirtle', 'Wartortle', 'Blastoise', 'Caterpie', 'Metapod', 'Butterfree',
+        'Weedle', 'Kakuna', 'Beedrill', 'Pidgey', 'Pidgeotto', 'Pidgeot', 'Rattata',
+        'Raticate', 'Spearow', 'Fearow', 'Ekans', 'Arbok', 'Pikachu', 'Raichu',
+        'Sandshrew', 'Sandslash', 'Nidoran♀', 'Nidorina', 'Nidoqueen', 'Nidoran♂',
+        'Nidorino', 'Nidoking', 'Clefairy', 'Clefable', 'Vulpix', 'Ninetales',
+        'Jigglypuff', 'Wigglytuff', 'Zubat', 'Golbat', 'Oddish', 'Gloom', 'Vileplume',
+        'Paras', 'Parasect', 'Venonat', 'Venomoth', 'Diglett', 'Dugtrio', 'Meowth',
+        'Persian', 'Psyduck', 'Golduck', 'Mankey', 'Primeape', 'Growlithe', 'Arcanine',
+        'Poliwag', 'Poliwhirl', 'Poliwrath', 'Abra', 'Kadabra', 'Alakazam', 'Machop',
+        'Machoke', 'Machamp', 'Bellsprout', 'Weepinbell', 'Victreebel', 'Tentacool',
+        'Tentacruel', 'Geodude', 'Graveler', 'Golem', 'Ponyta', 'Rapidash', 'Slowpoke',
+        'Slowbro', 'Magnemite', 'Magneton', 'Farfetch\'d', 'Doduo', 'Dodrio', 'Seel',
+        'Dewgong', 'Grimer', 'Muk', 'Shellder', 'Cloyster', 'Gastly', 'Haunter', 'Gengar',
+        'Onix', 'Drowzee', 'Hypno', 'Krabby', 'Kingler', 'Voltorb', 'Electrode', 'Exeggcute',
+        'Exeggutor', 'Cubone', 'Marowak', 'Hitmonlee', 'Hitmonchan', 'Lickitung', 'Koffing',
+        'Weezing', 'Rhyhorn', 'Rhydon', 'Chansey', 'Tangela', 'Kangaskhan', 'Horsea',
+        'Seadra', 'Goldeen', 'Seaking', 'Staryu', 'Starmie', 'Mr. Mime', 'Scyther',
+        'Jynx', 'Electabuzz', 'Magmar', 'Pinsir', 'Tauros', 'Magikarp', 'Gyarados',
+        'Lapras', 'Ditto', 'Eevee', 'Vaporeon', 'Jolteon', 'Flareon', 'Porygon',
+        'Omanyte', 'Omastar', 'Kabuto', 'Kabutops', 'Aerodactyl', 'Snorlax', 'Articuno',
+        'Zapdos', 'Moltres', 'Dratini', 'Dragonair', 'Dragonite', 'Mewtwo', 'Mew'
+    ];
+    return names[id - 1] || 'Unknown';
+}
+
+// DOM elements
+const card = document.getElementById('card');
+const cardFront = document.getElementById('card-front');
+const cardBack = document.getElementById('card-back');
+const pokemonImage = document.getElementById('pokemon-image');
+const pokemonName = document.getElementById('pokemon-name');
+const pokemonNumber = document.getElementById('pokemon-number');
+const pokemonTypes = document.getElementById('pokemon-types');
+const instructions = document.getElementById('instructions');
+const pokemonCry = document.getElementById('pokemon-cry');
+const pokedexBtn = document.getElementById('pokedex-btn');
+const pokedexModal = document.getElementById('pokedex-modal');
+const pokedexContent = document.getElementById('pokedex-content');
+const closeBtn = document.querySelector('.close-btn');
+const backgroundMusic = document.getElementById('background-music');
+const musicToggle = document.getElementById('music-toggle');
+const musicStatus = document.getElementById('music-status');
+
+let currentPokemon = null;
+let isRevealed = false;
+let isMusicPlaying = false;
+
+// Initialize
+window.addEventListener('load', () => {
     getRandomPokemon();
+    // Try to autoplay background music (may be blocked by browser)
+    playBackgroundMusic().catch(e => console.log('Autoplay prevented:', e));
+});
 
-    // Hide loading screen when ready
-    setTimeout(() => {
-      hideLoadingScreen();
-      state.isFirstLoad = false;
-    }, 500);
+// Get a random Pokémon
+function getRandomPokemon() {
+    const randomIndex = Math.floor(Math.random() * pokemonData.length);
+    currentPokemon = pokemonData[randomIndex];
+    isRevealed = false;
 
-    // Check for shared Pokémon from URL
-    checkForSharedPokemon();
+    // Reset card state
+    card.classList.remove('flipped');
+    cardFront.classList.add('hidden');
+    cardBack.classList.remove('hidden');
 
-  } catch (error) {
-    console.error('Initialization error:', error);
-    showError('Failed to initialize. Please refresh the page.');
-  }
+    // Set background based on primary type
+    document.body.className = currentPokemon.types[0] ? `${currentPokemon.types[0]}-bg` : '';
+
+    instructions.textContent = 'Click to reveal a Pokémon';
 }
 
-// ===== OPTIMIZED DATA LOADING =====
-async function preloadCriticalAssets() {
-  // Preload first 10 Pokémon immediately
-  const criticalPokemon = [1, 4, 7, 25, 150, 151]; // Starters + popular
-  await Promise.all([
-    ...criticalPokemon.map(id => preloadPokemon(id)),
-    preloadAudio('ui-sound'),
-    preloadAudio('card-flip-sound')
-  ]);
-}
+// Reveal the Pokémon
+function revealPokemon() {
+    if (!isRevealed) {
+        isRevealed = true;
+        card.classList.add('flipped');
 
-async function loadInitialPokemonData() {
-  const cacheKey = `pokemon-list-${POKEMON_COUNT}`;
+        // Set Pokémon info
+        pokemonImage.src = currentPokemon.imageUrl;
+        pokemonImage.alt = currentPokemon.name;
+        pokemonName.textContent = currentPokemon.name;
+        pokemonNumber.textContent = `#${currentPokemon.id.toString().padStart(3, '0')}`;
 
-  if (state.cache.has(cacheKey)) {
-    state.pokemonData = state.cache.get(cacheKey);
-    return;
-  }
+        // Set types
+        pokemonTypes.innerHTML = '';
+        currentPokemon.types.forEach(type => {
+            const typeBadge = document.createElement('div');
+            typeBadge.className = `type-badge type-${type}`;
+            typeBadge.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+            pokemonTypes.appendChild(typeBadge);
+        });
 
-  // Only load basic data initially
-  const response = await fetch(`${API_BASE_URL}/pokemon?limit=${POKEMON_COUNT}`);
-  const data = await response.json();
+        // Play sound
+        pokemonCry.src = currentPokemon.soundUrl;
+        pokemonCry.play().catch(e => console.log('Audio play failed:', e));
 
-  state.pokemonData = data.results.map((pokemon, index) => ({
-    id: index + 1,
-    name: formatPokemonName(pokemon.name),
-    imageUrl: `${SPRITE_BASE_URL}/${index + 1}.png`,
-    cryUrl: `${CRY_BASE_URL}/${pokemon.name}.ogg`,
-    detailsUrl: pokemon.url
-  }));
+        // Show front after animation
+        setTimeout(() => {
+            cardFront.classList.remove('hidden');
+            cardBack.classList.add('hidden');
+        }, 400);
 
-  state.cache.set(cacheKey, state.pokemonData);
-}
-
-async function loadRemainingAssets() {
-  // Lazy load remaining Pokémon data
-  setTimeout(async () => {
-    try {
-      await loadAllTypes();
-
-      // Load remaining Pokémon in chunks
-      const chunkSize = 10;
-      for (let i = 0; i < state.pokemonData.length; i += chunkSize) {
-        const chunk = state.pokemonData.slice(i, i + chunkSize);
-        await Promise.all(chunk.map(pokemon => loadPokemonDetails(pokemon)));
-        updateLoadingProgress(70 + (i / state.pokemonData.length * 20));
-      }
-
-      // Load Pokédex after all data is ready
-      if (!state.isFirstLoad) {
-        loadPokedexPage();
-      }
-
-    } catch (error) {
-      console.error('Background loading error:', error);
+        instructions.textContent = 'Click to reveal another Pokémon';
+    } else {
+        getRandomPokemon();
     }
-  }, 1000);
 }
 
-async function preloadPokemon(id) {
-  try {
-    const pokemon = state.pokemonData.find(p => p.id === id) || await getPokemonById(id);
+// Show Pokédex
+function showPokedex() {
+    if (!currentPokemon) return;
 
-    await Promise.all([
-      preloadImage(pokemon.imageUrl),
-      preloadImage(`${SPRITE_BASE_URL}/shiny/${pokemon.id}.png`),
-      preloadAudio(pokemon.cryUrl)
-    ]);
+    pokedexContent.innerHTML = `
+        <div class="pokedex-header">
+            <img src="${currentPokemon.imageUrl}" alt="${currentPokemon.name}" class="pokedex-image">
+            <div class="pokedex-details">
+                <h2 class="pokedex-name">${currentPokemon.name}</h2>
+                <p class="pokedex-number">#${currentPokemon.id.toString().padStart(3, '0')}</p>
+                <div class="pokedex-types">
+                    ${currentPokemon.types.map(type =>
+        `<span class="pokedex-type type-${type}">${type.charAt(0).toUpperCase() + type.slice(1)}</span>`
+    ).join('')}
+                </div>
+                <p><strong>Category:</strong> ${currentPokemon.category}</p>
+                <p><strong>Height:</strong> ${currentPokemon.height}m</p>
+                <p><strong>Weight:</strong> ${currentPokemon.weight}kg</p>
+                <p><strong>Abilities:</strong> ${currentPokemon.abilities}</p>
+                <p><strong>Habitat:</strong> ${currentPokemon.habitat}</p>
+            </div>
+        </div>
+        
+        <div class="pokedex-stats">
+            ${Object.entries(currentPokemon.stats).map(([stat, value]) => `
+                <div class="stat-item">
+                    <span class="stat-name">${stat.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')}:</span>
+                    <span class="stat-value">${value}</span>
+                </div>
+            `).join('')}
+        </div>
+        
+        <p class="pokedex-description">${currentPokemon.description}</p>
+        
+        ${currentPokemon.evolution.length > 1 ? `
+        <div class="pokedex-evolution">
+            <h3>Evolution Chain</h3>
+            <div class="evolution-chain">
+                ${currentPokemon.evolution.map(pokemonId => {
+        const pokemon = pokemonData.find(p => p.id === pokemonId) || pokemonData[0];
+        return `
+                        <div class="evolution-stage">
+                            <img src="${pokemon.imageUrl}" alt="${pokemon.name}" class="evolution-image">
+                            <span class="evolution-name">${pokemon.name}</span>
+                        </div>
+                    `;
+    }).join('')}
+            </div>
+        </div>
+        ` : ''}
+    `;
 
-    return pokemon;
-  } catch (error) {
-    console.error(`Error preloading Pokémon ${id}:`, error);
-    return null;
-  }
+    pokedexModal.classList.remove('hidden');
 }
 
-async function preloadImage(url) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.src = url;
-    img.onload = resolve;
-    img.onerror = resolve;
-  });
+// Close Pokédex
+function closePokedex() {
+    pokedexModal.classList.add('hidden');
 }
 
-async function preloadAudio(url) {
-  return new Promise((resolve) => {
-    const audio = new Audio(url);
-    audio.preload = 'auto';
-    audio.oncanplaythrough = resolve;
-    audio.onerror = resolve;
-  });
+// Background music control
+async function playBackgroundMusic() {
+    try {
+        await backgroundMusic.play();
+        isMusicPlaying = true;
+        musicStatus.textContent = 'ON';
+    } catch (e) {
+        console.log('Background music play failed:', e);
+        isMusicPlaying = false;
+        musicStatus.textContent = 'OFF';
+    }
 }
 
-// ===== OPTIMIZED POKÉMON DISPLAY =====
-async function showPokemon(pokemon) {
-  if (!pokemon) return;
-
-  state.currentPokemon = pokemon;
-  state.isRevealed = true;
-
-  // Set image source and handle loading
-  elements.pokemonImage.onload = () => {
-    elements.pokemonImage.classList.add('loaded');
-    animateCardReveal();
-  };
-
-  elements.pokemonImage.classList.remove('loaded');
-  elements.pokemonImage.src = pokemon.imageUrl;
-  elements.pokemonImage.alt = pokemon.name;
-
-  // Update basic info immediately
-  elements.pokemonName.textContent = pokemon.name;
-  elements.pokemonNumber.textContent = `#${pokemon.id.toString().padStart(3, '0')}`;
-
-  // Load details if not already loaded
-  if (!pokemon.types) {
-    const details = await loadPokemonDetails(pokemon);
-    if (details) Object.assign(pokemon, details);
-  }
-
-  // Display types if available
-  if (pokemon.types) {
-    displayPokemonTypes(pokemon.types);
-  }
-
-  // Play cry with fallback
-  playPokemonCry(pokemon.cryUrl);
-
-  // Update UI
-  elements.instructions.textContent = 'Click to reveal another Pokémon';
-  elements.detailsBtn.classList.remove('hidden');
-
-  // Flip card if not already flipped
-  if (!elements.card.classList.contains('flipped')) {
-    flipCard();
-  }
+function toggleBackgroundMusic() {
+    if (isMusicPlaying) {
+        backgroundMusic.pause();
+        musicStatus.textContent = 'OFF';
+    } else {
+        backgroundMusic.play();
+        musicStatus.textContent = 'ON';
+    }
+    isMusicPlaying = !isMusicPlaying;
 }
 
-// ===== OPTIMIZED AUDIO HANDLING =====
-async function playPokemonCry(url) {
-  if (!state.isSoundOn) return;
+// Event listeners
+card.addEventListener('click', revealPokemon);
+pokedexBtn.addEventListener('click', showPokedex);
+closeBtn.addEventListener('click', closePokedex);
+musicToggle.addEventListener('click', toggleBackgroundMusic);
 
-  try {
-    // Try OGG first
-    audio.pokemonCry.src = url;
-    await audio.pokemonCry.play().catch(async () => {
-      // Fallback to MP3
-      audio.pokemonCry.src = url.replace('.ogg', '.mp3');
-      await audio.pokemonCry.play();
-    });
-  } catch (error) {
-    console.log('Audio playback failed:', error);
-  }
-}
-
-// ===== OPTIMIZED POKÉDEX LOADING =====
-async function loadPokedexPage() {
-  try {
-    const startIdx = (state.currentPage - 1) * state.itemsPerPage;
-    const endIdx = startIdx + state.itemsPerPage;
-    const pokemonToLoad = state.pokemonData.slice(startIdx, endIdx);
-
-    // Show skeleton loading
-    showLoading(elements.pokedexContent, pokemonToLoad.length);
-
-    // Load details for current page
-    const pokemonWithDetails = await Promise.all(
-      pokemonToLoad.map(async pokemon => {
-        const details = await loadPokemonDetails(pokemon);
-        return { ...pokemon, ...(details || {}) };
-      })
-    );
-
-    // Render items
-    elements.pokedexContent.innerHTML = '';
-    pokemonWithDetails.forEach(pokemon => {
-      elements.pokedexContent.appendChild(createPokedexItem(pokemon));
-    });
-
-    updatePaginationInfo();
-    elements.loadMoreBtn.style.display =
-      endIdx < state.pokemonData.length ? 'block' : 'none';
-
-  } catch (error) {
-    console.error('Error loading Pokédex page:', error);
-    showError('Failed to load Pokédex. Please try again.', elements.pokedexContent);
-  }
-}
-
-// ===== NEW PERFORMANCE FEATURES =====
-function createImageObserver() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const img = entry.target;
-        img.src = img.dataset.src;
-        observer.unobserve(img);
-      }
-    });
-  }, { rootMargin: '200px' });
-
-  return observer;
-}
-
-function setupLazyLoading() {
-  const imageObserver = createImageObserver();
-  document.querySelectorAll('[data-src]').forEach(img => {
-    imageObserver.observe(img);
-  });
-}
-
-function cleanupResources() {
-  // Clean up old particles
-  document.querySelectorAll('.particle').forEach(particle => {
-    particle.remove();
-  });
-
-  // Clear unused cache entries
-  if (state.cache.size > 50) {
-    const keys = Array.from(state.cache.keys()).slice(0, 10);
-    keys.forEach(key => state.cache.delete(key));
-  }
-}
-
-// ===== INITIALIZATION =====
-document.addEventListener('DOMContentLoaded', () => {
-  // Start loading immediately
-  init();
-
-  // Set up periodic cleanup
-  setInterval(cleanupResources, 30000);
+// Close modal when clicking outside content
+pokedexModal.addEventListener('click', (e) => {
+    if (e.target === pokedexModal) {
+        closePokedex();
+    }
 });

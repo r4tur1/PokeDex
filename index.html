@@ -4,137 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeDex by R4tur1</title>
+    <title>Pokémon Card Revealer</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="preload" href="styles.css" as="style">
-    <link rel="preload" href="script.js" as="script">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="loading-content">
-            <img src="assets/loading.gif" alt="Loading" class="loading-animation">
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
-            </div>
-            <p id="loading-text">Booting Pokédex OS...</p>
-        </div>
+    <div class="background-music-control">
+        <button id="music-toggle" class="music-btn">
+            <i class="fas fa-music"></i>
+            <span id="music-status">ON</span>
+        </button>
     </div>
 
     <div class="container">
-        <div class="background-music-control">
-            <button id="music-toggle" class="music-btn" aria-label="Toggle music">
-                <i class="fas fa-music"></i>
-                <span id="music-status">ON</span>
-            </button>
-            <button id="sound-toggle" class="music-btn" aria-label="Toggle sound effects">
-                <i class="fas fa-volume-up"></i>
-                <span id="sound-status">ON</span>
-            </button>
-        </div>
-
-        <div class="container">
-            <div id="card" class="card" tabindex="0" aria-label="Pokémon reveal card">
-                <div id="card-back" class="card-back">
-                    <div class="pokeball">
-                        <div class="pokeball-center"></div>
-                    </div>
-                    <div class="holographic-effect"></div>
-                </div>
-                <div id="card-front" class="card-front hidden">
-                    <div class="image-container">
-                        <div class="image-loader"></div>
-                        <img id="pokemon-image" src="" alt="" class="pokemon-image hidden" crossorigin="anonymous">
-                        <div class="pokemon-shine"></div>
-                    </div>
-                    <div class="pokemon-info">
-                        <h2 id="pokemon-name" aria-live="polite"></h2>
-                        <p id="pokemon-number"></p>
-                        <div id="pokemon-types" class="types-container"></div>
-                        <div class="pokemon-stats hidden" id="pokemon-stats">
-                            <div class="stat-bar">
-                                <span class="stat-name">HP</span>
-                                <progress class="stat-value" value="0" max="255"></progress>
-                            </div>
-                            <div class="stat-bar">
-                                <span class="stat-name">ATK</span>
-                                <progress class="stat-value" value="0" max="255"></progress>
-                            </div>
-                            <div class="stat-bar">
-                                <span class="stat-name">DEF</span>
-                                <progress class="stat-value" value="0" max="255"></progress>
-                            </div>
-                        </div>
-                    </div>
-                    <button id="details-btn" class="details-btn hidden">
-                        <i class="fas fa-chart-bar"></i> Stats
-                    </button>
-                </div>
+        <div id="card" class="card">
+            <div id="card-back" class="card-back">
+                <div class="pokeball"></div>
             </div>
-            <p id="instructions" aria-live="polite">Click or press space to reveal a Pokémon</p>
-            <div class="action-buttons">
-                <button id="pokedex-btn" class="pokedex-btn" aria-label="Open Pokédex">
-                    <i class="fas fa-book"></i> Pokédex
-                </button>
-                <button id="new-pokemon-btn" class="new-pokemon-btn" aria-label="Get new Pokémon">
-                    <i class="fas fa-sync-alt"></i> New
-                </button>
+            <div id="card-front" class="card-front hidden">
+                <img id="pokemon-image" src="" alt="Pokémon" class="pokemon-image">
+                <h2 id="pokemon-name"></h2>
+                <p id="pokemon-number"></p>
+                <div id="pokemon-types" class="types-container"></div>
             </div>
         </div>
+        <p id="instructions">Click to reveal a Pokémon</p>
+        <button id="pokedex-btn" class="pokedex-btn">
+            <i class="fas fa-book"></i> Pokédex
+        </button>
+    </div>
+    <audio id="pokemon-cry" preload="auto"></audio>
+    <audio id="background-music" loop>
+        <source src="https://play.pokemonshowdown.com/audio/bw-rival.ogg" type="audio/ogg">
+    </audio>
 
-        <div id="pokedex-modal" class="modal hidden" aria-hidden="true" role="dialog">
-            <div class="modal-content">
-                <span class="close-btn" tabindex="0" aria-label="Close Pokédex">&times;</span>
-                <div class="pokedex-header">
-                    <h2>Pokédex</h2>
-                    <div class="pokedex-controls">
-                        <div class="search-container">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="pokedex-search" placeholder="Search Pokémon..."
-                                aria-label="Search Pokémon">
-                        </div>
-                        <div class="filter-controls">
-                            <select id="type-filter" aria-label="Filter by type">
-                                <option value="">All Types</option>
-
-                            </select>
-                            <button id="random-pokemon-btn" class="random-btn" aria-label="Get random Pokémon">
-                                <i class="fas fa-random"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div id="pokedex-content" class="pokedex-grid">
-
-                </div>
-                <div class="pokedex-footer">
-                    <button id="load-more-btn" class="load-more-btn">Load More Pokémon</button>
-                    <div class="pagination-info" id="pagination-info"></div>
-                </div>
-            </div>
-        </div>
-
-        <div id="pokemon-modal" class="pokemon-modal hidden" aria-hidden="true" role="dialog">
-            <div class="pokemon-modal-content">
-                <span class="close-pokemon-btn" tabindex="0" aria-label="Close details">&times;</span>
-                <div class="pokemon-modal-main">
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Audio elements -->
-        <audio id="pokemon-cry" preload="auto"></audio>
-        <audio id="background-music" loop preload="auto">
-            <source src="https://play.pokemonshowdown.com/audio/bw-rival.ogg" type="audio/ogg">
-        </audio>
-        <audio id="ui-sound" preload="auto" src="https://www.soundjay.com/buttons/sounds/button-09.mp3"></audio>
-        <audio id="card-flip-sound" preload="auto"
-            src="https://www.soundjay.com/mechanical/sounds/card-flip-01.mp3"></audio>
-
-        <script src="script.js" defer></script>
+    <script src="script.js"></script>
 </body>
 
 </html>

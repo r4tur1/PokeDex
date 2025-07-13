@@ -6,7 +6,7 @@ const pokemonData = Array.from({ length: 151 }, (_, i) => {
         id,
         name,
         imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
-        soundUrl: `https://play.pokemonshowdown.com/audio/cries/${name.toLowerCase()}.ogg`,
+        soundUrl: `https://play.pokemonshowdown.com/audio/cries/${name.toLowerCase()}.mp3`,
         ...getPokemonDetails(id, name)
     };
 });
